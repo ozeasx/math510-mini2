@@ -14597,7 +14597,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Mini-Project-2---MATH-510---Ozeas-Carvalho">Mini-Project 2 - MATH-510 - Ozeas Carvalho<a class="anchor-link" href="#Mini-Project-2---MATH-510---Ozeas-Carvalho">&#182;</a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2><p>I was interested in solving recreational math problems using linear programming (LP). I found an integer linear programming (ILP) formulation for sudoku [1], and then I adapted that to solve magic squares.</p>
-<p>A magic square is an $n \times n$ matrix in which the sum of the numbers in each row, column, and diagonal have the same value, called the &quot;magic constant.&quot; The numbers are usually non-repeating positive integers. The Wikipedia article on magic squares has a great deal of information [2].</p>
+<p>A magic square is an $n \times n$ matrix in which the sum of the numbers in each row, column, and diagonal have the same value, called the &quot;magic constant.&quot; The matrix entries are usually non-repeating positive integers. The Wikipedia article on magic squares has a great deal of information [2].</p>
 <p>Here's an example of a $3 \times 3$ magic square, with a magic constant of 15:</p>
 $$
 \begin{bmatrix}
@@ -14606,8 +14606,8 @@ $$
 4 &amp; 3 &amp; 8
 \end{bmatrix}
 $$<p>Generally, the magic constant of an $n \times n$ magic square is given by $M =\frac{n^3 + n}{2}$.</p>
-<h2 id="ILP-Formulation">ILP Formulation<a class="anchor-link" href="#ILP-Formulation">&#182;</a></h2><p>Since we are not trying to minimize or maximize anything, we will not define an objective function but just the problem constraints. Given that a magic square contains only non-repeating integers, we will use $n^2$ binary decision variables for each matrix element representing the integer for that entry.</p>
-<p>We will use the notation $x_{ij}$, where $i$ corresponds to the $n^2$ matrix entries, and $j$ corresponds to the $n^2$ decision variables in that entry.</p>
+<h2 id="ILP-Formulation">ILP Formulation<a class="anchor-link" href="#ILP-Formulation">&#182;</a></h2><p>Since we are not trying to minimize or maximize anything, we will not define an objective function but just the problem constraints.</p>
+<p>Given that a magic square contains only non-repeating integers, we will use $n^2$ binary decision variables for each matrix element representing the integer for that entry. We will use the notation $x_{ij}$, where $i$ corresponds to the $n^2$ matrix entries, and $j$ corresponds to the $n^2$ decision variables in that entry.</p>
 <p>We should have only one integer per entry, so the sum of all decision variables of an entry must be equal to 1:</p>
 $$
 \begin{equation}
@@ -14618,26 +14618,30 @@ $$
 \begin{equation}
 \sum_{i=1}^{n^2} x_{ij} = 1, j \in \{1, \dots, n^2\}
 \end{equation}
-$$<p>The sum of each row and column must be equal to the magic constant $M$:</p>
+$$<p>The sum of each row and column must be equal to the magic constant $M$.</p>
+<p>For each row $k \in \{0, 1, \dots, n\}$:
 $$
 \begin{equation}
-\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{1, 2, \dots, n\}
+\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{1 + kn, 2 + kn, \dots, n + kn\}
 \end{equation}
-$$$$
-\begin{equation}
-\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{0n + 1, 1n + 1, 2n + 1, \dots, n^2 -n + 1\}
-\end{equation}
-$$<p>Main diagonal:</p>
+$$</p>
+<p>For each column $k \in \{1, 2, \dots, n\}$:
 $$
 \begin{equation}
-\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{0n + 1, 1n + 2, 2n + 3, \dots, n^2\}
+\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{k, n + k, 2n + k, 3n + k\dots, n^2\}
+\end{equation}
+$$</p>
+<p>Main diagonal:</p>
+$$
+\begin{equation}
+\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{1, n + 2, 2n + 3, 3n + 4, \dots, n^2\}
 \end{equation}
 $$<p>Secondary diagonal:</p>
 $$
 \begin{equation}
-\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{n, 2n - 1, 3n - 2,\dots, n\}
+\sum_{j=1}^{n^2} x_{ij}j = M, i \in \{n, 2n - 1, 3n - 2, 4n - 3 \dots, n^2 - n + 1\}
 \end{equation}
-$$<p>To test the formulation, we implemented the problem using PuLP, a Python LP library which has a ILP solver [3]. Here are the magic squares found for $n \in \{3, 4, 5, 6\}$. On my machine (i9, 16GB RAM), it took about 6 minutes to solve for $n=6$. For $n = 7$, I gave up after 30 minutes.</p>
+$$<h2 id="Results">Results<a class="anchor-link" href="#Results">&#182;</a></h2><p>To test the formulation, we implemented the problem using PuLP, a Python LP library which has a ILP solver [3]. Here are the magic squares found for $n \in \{3, 4, 5, 6\}$. On my machine (i9, 16GB RAM), it took about 6 minutes to solve for $n=6$. For $n = 7$, I gave up after 30 minutes.</p>
 $$
 \begin{bmatrix}
 4 &amp; 9 &amp; 2 \\
